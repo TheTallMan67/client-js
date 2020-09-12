@@ -2000,13 +2000,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 class HttpError extends Error {
-  constructor(message, statusCode, statusText) {
+  constructor(message, statusCode, statusText, responseHeaders) {
     super(message);
     this.message = message;
     this.name = "HttpError";
     this.statusCode = statusCode;
     this.status = statusCode;
     this.statusText = statusText;
+    this.responseHeaders = responseHeaders;
   }
 
   toJSON() {
@@ -2015,8 +2016,18 @@ class HttpError extends Error {
       statusCode: this.statusCode,
       status: this.status,
       statusText: this.statusText,
-      message: this.message
+      message: this.message,
+      responseHeaders: this.responseHeaders
     };
+  }
+
+  getResponseHeader(key) {
+    return this.responseHeaders && this.responseHeaders.get(key) || "";
+  }
+
+  getAllResponseHeaders() {
+    debugger;
+    this.responseHeaders;
   }
 
   static create(failure) {
@@ -2024,6 +2035,8 @@ class HttpError extends Error {
     let status = 0;
     let statusText = "Error";
     let message = "Unknown error";
+    let headers = new Headers();
+    debugger;
 
     if (failure) {
       if (typeof failure == "object") {
@@ -2037,12 +2050,14 @@ class HttpError extends Error {
             message = failure.error.responseText;
           }
         }
+
+        debugger; // typeof failure = ErrorResponse
       } else if (typeof failure == "string") {
         message = failure;
       }
     }
 
-    return new HttpError(message, status, statusText);
+    return new HttpError(message, status, statusText, headers);
   }
 
 }
@@ -2481,7 +2496,7 @@ async function humanizeError(resp) {
   } catch (_) {// ignore
   }
 
-  throw new HttpError_1.default(msg, resp.status, resp.statusText);
+  throw new HttpError_1.default(msg, resp.status, resp.statusText, resp.headers);
 }
 
 exports.humanizeError = humanizeError;

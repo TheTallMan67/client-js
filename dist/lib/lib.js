@@ -216,7 +216,7 @@ async function humanizeError(resp) {
   } catch (_) {// ignore
   }
 
-  throw new HttpError_1.default(msg, resp.status, resp.statusText);
+  throw new HttpError_1.default(msg, resp.status, resp.statusText, resp.headers);
 }
 
 exports.humanizeError = humanizeError;

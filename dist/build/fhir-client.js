@@ -11989,7 +11989,7 @@ Object.defineProperty(exports, "__esModule", {
 var HttpError = /*#__PURE__*/function (_Error) {
   (0, _inheritsLoose2.default)(HttpError, _Error);
 
-  function HttpError(message, statusCode, statusText) {
+  function HttpError(message, statusCode, statusText, responseHeaders) {
     var _this;
 
     _this = _Error.call(this, message) || this;
@@ -11998,6 +11998,7 @@ var HttpError = /*#__PURE__*/function (_Error) {
     _this.statusCode = statusCode;
     _this.status = statusCode;
     _this.statusText = statusText;
+    _this.responseHeaders = responseHeaders;
     return _this;
   }
 
@@ -12009,8 +12010,18 @@ var HttpError = /*#__PURE__*/function (_Error) {
       statusCode: this.statusCode,
       status: this.status,
       statusText: this.statusText,
-      message: this.message
+      message: this.message,
+      responseHeaders: this.responseHeaders
     };
+  };
+
+  _proto.getResponseHeader = function getResponseHeader(key) {
+    return this.responseHeaders && this.responseHeaders.get(key) || "";
+  };
+
+  _proto.getAllResponseHeaders = function getAllResponseHeaders() {
+    debugger;
+    this.responseHeaders;
   };
 
   HttpError.create = function create(failure) {
@@ -12018,6 +12029,8 @@ var HttpError = /*#__PURE__*/function (_Error) {
     var status = 0;
     var statusText = "Error";
     var message = "Unknown error";
+    var headers = new Headers();
+    debugger;
 
     if (failure) {
       if (typeof failure == "object") {
@@ -12031,12 +12044,14 @@ var HttpError = /*#__PURE__*/function (_Error) {
             message = failure.error.responseText;
           }
         }
+
+        debugger; // typeof failure = ErrorResponse
       } else if (typeof failure == "string") {
         message = failure;
       }
     }
 
-    return new HttpError(message, status, statusText);
+    return new HttpError(message, status, statusText, headers);
   };
 
   return HttpError;
@@ -12636,7 +12651,7 @@ function _humanizeError() {
             _context2.t0 = _context2["catch"](1);
 
           case 17:
-            throw new HttpError_1.default(msg, resp.status, resp.statusText);
+            throw new HttpError_1.default(msg, resp.status, resp.statusText, resp.headers);
 
           case 18:
           case "end":

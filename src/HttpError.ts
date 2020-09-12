@@ -3,6 +3,7 @@ interface ErrorResponse {
         status?: number
         statusText?: string
         responseText?: string
+        responseHeaders?: HeadersInit
     };
 }
 export default class HttpError extends Error
@@ -24,13 +25,19 @@ export default class HttpError extends Error
      */
     statusText: string;
 
-    constructor(message: string, statusCode: number, statusText: string) {
+    /**
+     * The HTTP response headers corresponding to this error
+     */
+    responseHeaders: Headers
+
+    constructor(message: string, statusCode: number, statusText: string, responseHeaders: Headers) {
         super(message);
         this.message    = message;
         this.name       = "HttpError";
         this.statusCode = statusCode;
         this.status     = statusCode;
         this.statusText = statusText;
+        this.responseHeaders = responseHeaders;
     }
 
     toJSON() {
@@ -39,8 +46,13 @@ export default class HttpError extends Error
             statusCode: this.statusCode,
             status    : this.status,
             statusText: this.statusText,
-            message   : this.message
+            message   : this.message,
+            responseHeaders : this.responseHeaders
         };
+    }
+
+    getResponseHeader(key: string) {
+        return (this.responseHeaders && this.responseHeaders.get(key)) || "";
     }
 
     static create(failure?: string | Error | ErrorResponse) {
@@ -48,6 +60,7 @@ export default class HttpError extends Error
         let status: string | number = 0;
         let statusText = "Error";
         let message = "Unknown error";
+        let headers: Headers = new Headers();
 
         if (failure) {
             if (typeof failure == "object") {
@@ -67,6 +80,6 @@ export default class HttpError extends Error
             }
         }
 
-        return new HttpError(message, status, statusText);
+        return new HttpError(message, status, statusText, headers);
     }
 }

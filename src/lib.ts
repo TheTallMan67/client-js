@@ -180,7 +180,7 @@ export async function humanizeError(resp: Response) {
         // ignore
     }
 
-    throw new HttpError(msg, resp.status, resp.statusText);
+    throw new HttpError(msg, resp.status, resp.statusText, resp.headers);
 }
 
 /**
