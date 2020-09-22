@@ -35,7 +35,6 @@ export default class HttpError extends Error {
         responseHeaders: Headers;
     };
     getResponseHeader(key: string): string;
-    getAllResponseHeaders(): void;
     static create(failure?: string | Error | ErrorResponse): HttpError;
 }
 export {};

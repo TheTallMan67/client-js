@@ -30,18 +30,12 @@ class HttpError extends Error {
     return this.responseHeaders && this.responseHeaders.get(key) || "";
   }
 
-  getAllResponseHeaders() {
-    debugger;
-    this.responseHeaders;
-  }
-
   static create(failure) {
     // start with generic values
     let status = 0;
     let statusText = "Error";
     let message = "Unknown error";
     let headers = new Headers();
-    debugger;
 
     if (failure) {
       if (typeof failure == "object") {
@@ -55,8 +49,6 @@ class HttpError extends Error {
             message = failure.error.responseText;
           }
         }
-
-        debugger; // typeof failure = ErrorResponse
       } else if (typeof failure == "string") {
         message = failure;
       }
